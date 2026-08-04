@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import type { Vehicle } from "@/types/damage"
+import FormField from "./form/FormField"
 
 const vehicleFields: {
   key: keyof Vehicle
@@ -63,22 +64,15 @@ export default function VehicleForm() {
 
       <div className="grid gap-6 md:grid-cols-2">
         {vehicleFields.map(field => (
-          <div key={field.key} className={field.key === "color" ? "md:col-span-2" : undefined}>
-            <label htmlFor={field.key} className="mb-2 block text-sm font-semibold text-slate-700">
-              {field.label}
-
-              {field.optional && <span className="ml-1 text-slate-400">(Optional)</span>}
-            </label>
-
-            <input
-              id={field.key}
-              type="text"
-              value={vehicle[field.key] ?? ""}
-              onChange={e => handleChange(field.key, e.target.value)}
-              placeholder={field.placeholder}
-              className="w-full rounded-xl border border-slate-300 bg-slate-50 px-4 py-3 text-slate-900 placeholder:text-slate-400 transition-all duration-200 focus:border-blue-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-blue-100"
-            />
-          </div>
+          <FormField
+            key={field.key}
+            id={field.key}
+            label={field.label}
+            value={vehicle[field.key] ?? ""}
+            placeholder={field.placeholder}
+            optional={field.optional}
+            onChange={value => handleChange(field.key, value)}
+          />
         ))}
       </div>
     </section>
