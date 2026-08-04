@@ -3,6 +3,8 @@
 import { useState } from "react"
 import type { Vehicle } from "@/types/damage"
 import FormField from "./form/FormField"
+import PanelCard from "@/components/PanelCard"
+import type { DamagePanel } from "@/types/damage"
 
 const vehicleFields: {
   key: keyof Vehicle
@@ -38,7 +40,32 @@ const vehicleFields: {
   }
 ]
 
+const initialPanels: DamagePanel[] = [
+  {
+    id: "hood",
+    name: "Hood",
+    dentCount: 1,
+    dentSize: "Medium",
+    severity: "Moderate"
+  },
+  {
+    id: "roof",
+    name: "Roof",
+    dentCount: 1,
+    dentSize: "Medium",
+    severity: "Moderate"
+  },
+  {
+    id: "left-front-door",
+    name: "Left Front Door",
+    dentCount: 1,
+    dentSize: "Medium",
+    severity: "Moderate"
+  }
+]
+
 export default function VehicleForm() {
+  const [panels, setPanels] = useState<DamagePanel[]>(initialPanels)
   const [vehicle, setVehicle] = useState<Vehicle>({
     year: "",
     make: "",
@@ -52,6 +79,19 @@ export default function VehicleForm() {
       ...prev,
       [field]: value
     }))
+  }
+
+  const handlePanelChange = (id: string, field: keyof DamagePanel, value: string | number) => {
+    setPanels(currentPanels =>
+      currentPanels.map(panel =>
+        panel.id === id
+          ? {
+              ...panel,
+              [field]: value
+            }
+          : panel
+      )
+    )
   }
 
   return (
@@ -73,6 +113,18 @@ export default function VehicleForm() {
             optional={field.optional}
             onChange={value => handleChange(field.key, value)}
           />
+        ))}
+      </div>
+
+      <div className="mt-10 space-y-6">
+        <div>
+          <h2 className="text-2xl font-bold text-slate-900">Damage Report</h2>
+
+          <p className="mt-2 text-sm text-slate-500">Record hail damage details for each vehicle panel.</p>
+        </div>
+
+        {panels.map(panel => (
+          <PanelCard key={panel.id} panel={panel} onChange={handlePanelChange} />
         ))}
       </div>
     </section>
