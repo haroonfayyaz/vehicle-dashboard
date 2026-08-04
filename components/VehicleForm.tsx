@@ -75,6 +75,7 @@ export default function VehicleForm() {
     vin: "",
     color: ""
   })
+  const [errors, setErrors] = useState<Record<string, string>>({})
 
   const [panels, setPanels] = useState<DamagePanel[]>(initialPanels)
 
@@ -100,8 +101,46 @@ export default function VehicleForm() {
     )
   }
 
+  const validateForm = () => {
+    const newErrors: Record<string, string> = {}
+
+    if (!vehicle.year) {
+      newErrors.year = "Year is required"
+    } else if (!/^\d{4}$/.test(vehicle.year)) {
+      newErrors.year = "Enter a valid 4 digit year"
+    }
+
+    if (!vehicle.make.trim()) {
+      newErrors.make = "Make is required"
+    }
+
+    if (!vehicle.model.trim()) {
+      newErrors.model = "Model is required"
+    }
+
+    if (!vehicle.color.trim()) {
+      newErrors.color = "Color is required"
+    }
+
+    panels.forEach(panel => {
+      if (panel.dentCount < 1 || panel.dentCount > 100) {
+        newErrors[`${panel.id}-dentCount`] = "Dent count must be between 1 and 100"
+      }
+    })
+
+    setErrors(newErrors)
+
+    return Object.keys(newErrors).length === 0
+  }
+
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
+
+    setSubmittedReport(null)
+
+    if (!validateForm()) {
+      return
+    }
 
     const report: DamageReport = {
       vehicle,
@@ -130,6 +169,7 @@ export default function VehicleForm() {
               value={vehicle[field.key] ?? ""}
               placeholder={field.placeholder}
               optional={field.optional}
+              error={errors[field.key]}
               onChange={value => handleVehicleChange(field.key, value)}
             />
           ))}

@@ -7,7 +7,8 @@ interface FormFieldProps {
   min?: number
   max?: number
   optional?: boolean
-  onChange: (value: string) => void
+  onChange: (value: string) => void 
+  error?: string
 }
 
 const inputStyles =
@@ -22,7 +23,8 @@ export default function FormField({
   min,
   max,
   optional,
-  onChange
+  onChange,
+  error
 }: FormFieldProps) {
   return (
     <div>
@@ -42,6 +44,8 @@ export default function FormField({
         onChange={event => onChange(event.target.value)}
         className={inputStyles}
       />
+
+      {error && <p className="mt-1 text-sm text-red-600">{error}</p>}
     </div>
   )
 }
